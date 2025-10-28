@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.seminar_assignment_2025.ui.GameScreen
+import com.example.seminar_assignment_2025.ui.SearchScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -69,18 +70,6 @@ fun NavGenerate() {
     ) {
         Text(
             "Home",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-@Composable fun SearchScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            "Search",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold
         )
