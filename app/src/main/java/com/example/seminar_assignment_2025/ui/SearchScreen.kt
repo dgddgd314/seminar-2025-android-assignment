@@ -28,13 +28,11 @@ fun SearchScreen(modifier: Modifier = Modifier,
 
     // 1. Column: 위(검색창)에서 아래(내용)로 쌓기 위해 사용
     Column(
-        // modifier.fillMaxSize() : Scaffold가 준 공간(바텀바 제외)을 꽉 채움
-        // .padding(16.dp) : 화면 좌우에 여백을 줌
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp)) // 상단 여백
+        Spacer(modifier = Modifier.height(16.dp))
 
         // 2. 검색창 (TextField)
         OutlinedTextField(
@@ -49,7 +47,6 @@ fun SearchScreen(modifier: Modifier = Modifier,
         )
 
         // 3. 비어있을 때 화면 (EmptyState)
-        // 검색창 밑의 남은 공간을 모두 차지하고, 그 안에서 정중앙에 배치
         EmptyState(modifier = Modifier.weight(1f))
     }
 }

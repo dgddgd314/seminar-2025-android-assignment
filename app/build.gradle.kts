@@ -67,4 +67,9 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
 }
