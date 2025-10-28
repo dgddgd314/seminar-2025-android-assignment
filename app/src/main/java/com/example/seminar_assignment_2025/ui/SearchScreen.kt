@@ -8,6 +8,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,9 +17,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.seminar_assignment_2025.search.SearchViewModel
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen(modifier: Modifier = Modifier,
+                 viewModel: SearchViewModel = viewModel()) {
+
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
     // 1. Column: 위(검색창)에서 아래(내용)로 쌓기 위해 사용
     Column(
         // modifier.fillMaxSize() : Scaffold가 준 공간(바텀바 제외)을 꽉 채움
@@ -30,8 +38,10 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 
         // 2. 검색창 (TextField)
         OutlinedTextField(
-            value = "", // 지금은 아무것도 연결 안 함 (가짜)
-            onValueChange = {}, // 지금은 아무것도 연결 안 함 (가짜)
+            value = searchQuery,
+            onValueChange = { newQuery ->
+                viewModel.onQueryChanged(newQuery)
+            },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("영화 검색...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
@@ -55,7 +65,6 @@ fun EmptyState(modifier: Modifier = Modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             // 1. 영화 아이콘
             Icon(
-                // R.drawable.movie_svgrepo_com (아래 '해야 할 일' 참고)
                 painter = painterResource(id = R.drawable.movie_svgrepo_com),
                 contentDescription = "Movie Icon",
                 modifier = Modifier.size(80.dp),
