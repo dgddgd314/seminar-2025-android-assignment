@@ -1991,8 +1991,8 @@ class MovieRepositoryImpl : MovieRepository {
         }
 
         return movieList.filter { movie ->
-            // 3. 영화 제목(it.title)에 검색어(query)가 포함되는지
-            //    대소문자 무시(ignoreCase = true)하고 확인
+            // 영화 제목(it.title)에 검색어(query)가 포함되는지
+            // 대소문자 무시(ignoreCase = true)하고 확인
             movie.title.contains(query, ignoreCase = true)
         }
     }

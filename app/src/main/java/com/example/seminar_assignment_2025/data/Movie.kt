@@ -2,7 +2,6 @@ package com.example.seminar_assignment_2025.data
 
 import kotlinx.serialization.Serializable
 
-// 부록에서 제공된 스키마입니다.
 // @Serializable 어노테이션은 Json 변환에 꼭 필요합니다. 넵.
 @Serializable
 data class Movie(
