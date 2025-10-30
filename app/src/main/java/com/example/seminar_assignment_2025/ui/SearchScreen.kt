@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -26,10 +27,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.seminar_assignment_2025.search.SearchViewModel
 import androidx.compose.ui.text.input.ImeAction
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier,
                  viewModel: SearchViewModel = viewModel()) {
 
+    // 상태 구독
     val searchQuery by viewModel.searchQuery.collectAsState()
     val recentSearches by viewModel.recentSearches.collectAsState()
 
@@ -53,19 +56,22 @@ fun SearchScreen(modifier: Modifier = Modifier,
             placeholder = { Text("영화 검색...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
             singleLine = true,
-            // (2) '가위표(X)' 버튼 (스펙)
+
+            // '가위표(X)' 버튼
             trailingIcon = {
-                if (searchQuery.isNotEmpty()) {
+                if (searchQuery.isNotEmpty()) { // 만약 비어있지 않다면, X자를 표시.
                     IconButton(onClick = { viewModel.onQueryChanged("") }) { // 검색창 비우기
                         Icon(Icons.Default.Clear, contentDescription = "Clear search")
                     }
                 }
             },
-            // (3) 키보드의 '검색' 버튼 설정
+
+            // 키보드의 '검색' 버튼
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Search // 키보드 액션 버튼을 '검색'으로 변경
             ),
-            // (4) '검색' 버튼을 눌렀을 때 실행할 행동
+
+            // 검색 버튼을 눌렀을 때 실행할 행동
             keyboardActions = KeyboardActions(
                 onSearch = {
                     // ViewModel에 '검색어 저장'을 '보고'
@@ -76,9 +82,47 @@ fun SearchScreen(modifier: Modifier = Modifier,
             )
         )
 
-        // 3. 비어있을 때 화면 (EmptyState)
-        EmptyState(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 3. UI 조건부 렌더링
+        if (searchQuery.isNotEmpty()) {
+            // 검색어가 존재할 때 (검색 결과 보여줄 곳) : 수정 예정.
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "'${searchQuery}' 검색 중...")
+            }
+        } else {
+            // 검색어가 비어있을 때
+            if (recentSearches.isNotEmpty()) {
+                // (1) 최근 검색어가 있으면 목록 보여주기
+                RecentSearchList(
+                    recentSearches = recentSearches,
+                    onSearch = { query ->
+                        viewModel.onQueryChanged(query) // 항목 클릭 -> 검색창 채우기
+                    },
+                    onDelete = { query ->
+                        viewModel.deleteSearch(query) // 개별 삭제
+                    },
+                    onClearAll = {
+                        viewModel.clearAllSearches() // 전체 삭제
+                    }
+                )
+            } else {
+                // (2) 최근 검색어도 없으면 EmptyState 보여주기
+                EmptyState(modifier = Modifier.fillMaxSize())
+            }
+        }
     }
+}
+
+@Composable
+fun RecentSearchList(
+    recentSearches: List<String>,
+    onSearch: (String) -> Unit,
+    onDelete: (String) -> Unit,
+    onClearAll: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+
 }
 
 @Composable
