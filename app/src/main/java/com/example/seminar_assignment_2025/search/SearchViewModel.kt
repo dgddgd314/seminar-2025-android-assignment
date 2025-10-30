@@ -16,6 +16,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     private val repository: RecentSearchRepository =
         RecentSearchRepositoryImpl(application.applicationContext)
+
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
@@ -38,9 +39,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         // 빈 값은 저장하지 않음
         if (query.isBlank()) return
 
-        // viewModelScope: ViewModel 전용 코루틴 공간
         viewModelScope.launch {
-            // Repository의 suspend 함수는 코루틴 안에서 호출해야 함
             repository.addSearchQuery(query)
         }
     }
