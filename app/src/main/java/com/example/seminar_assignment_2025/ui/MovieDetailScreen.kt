@@ -115,24 +115,24 @@ fun MovieDetailScreen(
                     Spacer(modifier = Modifier.height(300.dp))
 
                     // --- (2) 메인 콘텐츠 ---
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier.padding(22.dp)) {
                         // ⭐️ 4. 포스터가 튀어나올 공간(30dp)을 여기서 확보합니다.
                         //    (제거하면 포스터가 장르 칩을 가리게 됩니다)
-                        Spacer(modifier = Modifier.height(30.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         GenreChips(genreIds = loadedMovie.genre_ids)
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Text("Summary", style = MaterialTheme.typography.titleLarge)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(loadedMovie.overview ?: "No summary.", style = MaterialTheme.typography.bodyMedium)
+                        Text("Summary", style = MaterialTheme.typography.titleLarge, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(loadedMovie.overview ?: "No summary.", style = MaterialTheme.typography.bodyMedium, fontSize = 12.sp)
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Text("Popularity", style = MaterialTheme.typography.titleLarge)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(loadedMovie.popularity.toString(), style = MaterialTheme.typography.bodyMedium)
+                        Text("Popularity", style = MaterialTheme.typography.titleLarge, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(loadedMovie.popularity.toString(), style = MaterialTheme.typography.bodyMedium, fontSize = 12.sp)
                     }
                 }
 
