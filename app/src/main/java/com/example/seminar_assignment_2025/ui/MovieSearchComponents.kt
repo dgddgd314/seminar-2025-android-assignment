@@ -1,6 +1,7 @@
 package com.example.seminar_assignment_2025.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +29,34 @@ import com.example.seminar_assignment_2025.data.Movie
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
 
-class MovieSearchComponents {
+@Composable
+fun SearchResultList(
+    movies: List<Movie>,
+    onMovieClick: (Movie) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp) // 아이템 사이 간격
+    ) {
+        // 헤더
+        item {
+            Text(
+                "검색 결과 ${movies.size}개",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
 
+        // 영화 목록
+        items(movies) { movie ->
+            MovieItem(
+                movie = movie,
+                onClick = onMovieClick
+            )
+        }
+    }
 }
 
 @Serializable

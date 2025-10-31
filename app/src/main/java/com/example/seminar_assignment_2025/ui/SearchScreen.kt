@@ -42,6 +42,7 @@ fun SearchScreen(modifier: Modifier = Modifier,
     // 상태 구독
     val searchQuery by viewModel.searchQuery.collectAsState()
     val recentSearches by viewModel.recentSearches.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
 
     // (키보드 컨트롤러: 검색 후 키보드를 숨길 때 사용)
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -93,9 +94,22 @@ fun SearchScreen(modifier: Modifier = Modifier,
 
         // 3. UI 조건부 렌더링
         if (searchQuery.isNotEmpty()) {
-            // 검색어가 존재할 때 (검색 결과 보여줄 곳) : 수정 예정.
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "'${searchQuery}' 검색 중...")
+            // 검색 결과가 있으면 -> 'SearchResultList' 표시
+            if (searchResults.isNotEmpty()) {
+                SearchResultList(
+                    movies = searchResults,
+                    onMovieClick = { movie ->
+                        // (스펙: Jetpack Navigation으로 상세보기 이동)
+                        // TODO: navController.navigate("movieDetail/${movie.id}")
+                    }
+                )
+            }
+            // 검색 결과가 없으면 -> '검색 결과 없음' EmptyState 표시
+            else {
+                // (EmptyState를 재사용하거나, '결과 없음' 전용 Composable을 만듭니다)
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("'${searchQuery}'에 대한 검색 결과가 없습니다.")
+                }
             }
         } else {
             // 검색어가 비어있을 때

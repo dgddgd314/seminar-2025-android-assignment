@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Movie(
     val adult: Boolean,
-    val backdrop_path: String,
+    val backdrop_path: String?, // null값이 대체 왜 있는거져??
     val genre_ids: List<Int>,
     val id: Int,
     val original_language: String,
