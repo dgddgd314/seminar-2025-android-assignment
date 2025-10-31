@@ -12,13 +12,19 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarHalf
+import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,11 +45,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.seminar_assignment_2025.data.Movie
@@ -93,46 +102,66 @@ fun MovieDetailScreen(
         // 영화 정보가 로드되면, 스크롤 가능한 Column 표시
         else {
             val loadedMovie = movie!!
-            Column(
+
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding) // (Scaffold가 알려준 패딩 적용)
-                    .verticalScroll(rememberScrollState()) // (전체 스크롤)
             ) {
-                // --- (1) 상단 헤더 (Backdrop + Poster + Title) ---
-                MovieHeader(movie = loadedMovie)
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                ) {
+                    Spacer(modifier = Modifier.height(300.dp))
 
-                // --- (2) 메인 콘텐츠 (장르, 요약, 인기도) ---
-                Column(modifier = Modifier.padding(16.dp)) {
-                    GenreChips(genreIds = loadedMovie.genre_ids)
+                    // --- (2) 메인 콘텐츠 ---
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        // ⭐️ 4. 포스터가 튀어나올 공간(30dp)을 여기서 확보합니다.
+                        //    (제거하면 포스터가 장르 칩을 가리게 됩니다)
+                        Spacer(modifier = Modifier.height(30.dp))
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                        GenreChips(genreIds = loadedMovie.genre_ids)
 
-                    Text("Summary", style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(loadedMovie.overview ?: "No summary.", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                        Text("Summary", style = MaterialTheme.typography.titleLarge)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(loadedMovie.overview ?: "No summary.", style = MaterialTheme.typography.bodyMedium)
 
-                    Text("Popularity", style = MaterialTheme.typography.titleLarge)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(loadedMovie.popularity.toString(), style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Text("Popularity", style = MaterialTheme.typography.titleLarge)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(loadedMovie.popularity.toString(), style = MaterialTheme.typography.bodyMedium)
+                    }
                 }
+
+                // ⭐️ 5. 상단 헤더 (Z-Index = 1, 위에 표시됨)
+                //    이 Composable은 스크롤되지 않고 화면 상단에 "고정"됩니다.
+                MovieHeader(
+                    movie = loadedMovie,
+                    modifier = Modifier
+                        .zIndex(1f) // <-- 콘텐츠(z=0)보다 위에 그리도록 함
+                        .align(Alignment.TopCenter) // <-- Box의 상단에 고정
+                )
             }
         }
     }
 }
 
 @Composable
-private fun MovieHeader(movie: Movie) {
+private fun MovieHeader(movie: Movie,
+                        modifier: Modifier = Modifier)
+{
     val backdropUrl = "https://image.tmdb.org/t/p/original${movie.backdrop_path ?: ""}"
     val posterUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
     val rating = String.format("%.1f", movie.vote_average)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(300.dp) // (Figma 참고 임의 높이)
+            .graphicsLayer(clip = false)
     ) {
         // 1. Backdrop (배경 이미지)
         AsyncImage(
@@ -158,35 +187,51 @@ private fun MovieHeader(movie: Movie) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.BottomStart), // (Box의 하단에 배치)
-            verticalAlignment = Alignment.Bottom // (Row 내부 아이템들도 하단 정렬)
+                .align(Alignment.BottomStart) // (Box의 하단에 배치)
+                .padding(start = 16.dp, end = 16.dp), // 하단 패딩 추가
+            verticalAlignment = Alignment.Bottom
         ) {
+            // 포스터
             AsyncImage(
                 model = posterUrl,
                 contentDescription = movie.title,
                 modifier = Modifier
-                    .width(100.dp)
+                    .width(164.dp)
                     .aspectRatio(2 / 3f)
                     .clip(MaterialTheme.shapes.medium)
+                    .offset(y = 70.dp)
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(movie.title, style = MaterialTheme.typography.headlineSmall, color = Color.White, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(20.dp))
+            Column (
+                modifier = Modifier.align(Alignment.Bottom) // Column 내부 아이템들을 하단 정렬
+            ) {
+                Text(text = movie.title,
+                    modifier = Modifier.width(150.dp),
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically // 별과 텍스트 중앙 정렬
                 ) {
-                    RatingStars(
-                        rating = movie.vote_average.toFloat(), // 평점 전달
-                        maxStars = 5 // 총 별 개수
-                    )
-                    Spacer(modifier = Modifier.width(4.dp)) // 별과 숫자 사이 간격
                     Text(
                         text = rating, // 숫자 평점
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White
                     )
+
+                    Spacer(modifier = Modifier.width(4.dp)) // 별과 숫자 사이 간격
+
+                    RatingStars(
+                        rating = movie.vote_average.toFloat(),
+                        maxStars = 5 // 총 별 개수
+                    )
                 }
+                Spacer(modifier = Modifier.height(36.dp))
             }
         }
     }
@@ -198,7 +243,24 @@ fun RatingStars(
     maxStars: Int = 5,
     starColor: Color = Color(0xFFFFA000) // Figma 주황색 별
 ) {
+    Row {
+        // 0.0 ~ 5.0 스케일로 변환
+        val scaledRating = rating / 2f
 
+        repeat(maxStars) { index ->
+            val starType: ImageVector = when {
+                index + 1 <= scaledRating -> Icons.Filled.Star // 꽉 찬 별
+                index < scaledRating && index + 1 > scaledRating -> Icons.Filled.StarHalf // 반쪽 별
+                else -> Icons.Filled.StarOutline // 빈 별
+            }
+            Icon(
+                imageVector = starType,
+                contentDescription = null, // 접근성 고려: "별점" 같은 텍스트 필요
+                tint = starColor,
+                modifier = Modifier.size(20.dp) // 별 아이콘 크기
+            )
+        }
+    }
 }
 
 
