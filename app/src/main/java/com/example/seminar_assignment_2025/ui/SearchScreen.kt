@@ -22,8 +22,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -48,6 +52,9 @@ fun SearchScreen(modifier: Modifier = Modifier,
     // (키보드 컨트롤러: 검색 후 키보드를 숨길 때 사용)
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    // 검색창을 눌렀는지 확인
+    var isFocused by remember { mutableStateOf(false) }
+
     // 1. Column: 위(검색창)에서 아래(내용)로 쌓기 위해 사용
     Column(
         modifier = modifier
@@ -61,7 +68,11 @@ fun SearchScreen(modifier: Modifier = Modifier,
             value = searchQuery,
             onValueChange = { viewModel.onQueryChanged(it)
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState -> // 포커스 변경 시 상태 업데이트
+                isFocused = focusState.isFocused
+            },
             placeholder = { Text("영화 검색...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
             singleLine = true,
@@ -102,7 +113,8 @@ fun SearchScreen(modifier: Modifier = Modifier,
                     onMovieClick = { movie ->
                         // 영화 상세보기 이동
                         onMovieClick(movie.id)
-                    }
+                    },
+                    modifier = Modifier.weight(1f)
                 )
             }
             // 검색 결과가 없으면 -> '검색 결과 없음' EmptyState 표시
@@ -113,23 +125,32 @@ fun SearchScreen(modifier: Modifier = Modifier,
                 }
             }
         } else {
-            // 검색어가 비어있을 때
-            if (recentSearches.isNotEmpty()) {
-                // (1) 최근 검색어가 있으면 목록 보여주기
-                RecentSearchList(
-                    recentSearches = recentSearches,
-                    onSearch = { query ->
-                        viewModel.onQueryChanged(query) // 항목 클릭 -> 검색창 채우기
-                    },
-                    onDelete = { query ->
-                        viewModel.deleteSearch(query) // 개별 삭제
-                    },
-                    onClearAll = {
-                        viewModel.clearAllSearches() // 전체 삭제
-                    }
-                )
+            if (isFocused) {
+                // 최근 검색어가 비어있을 때
+                if (recentSearches.isNotEmpty()) {
+                    // (1) 최근 검색어가 있으면 목록 보여주기
+                    RecentSearchList(
+                        recentSearches = recentSearches,
+                        onSearch = { query ->
+                            viewModel.onQueryChanged(query) // 항목 클릭 -> 검색창 채우기
+                        },
+                        onDelete = { query ->
+                            viewModel.deleteSearch(query) // 개별 삭제
+                        },
+                        onClearAll = {
+                            viewModel.clearAllSearches() // 전체 삭제
+                        }
+                    )
+                    EmptyState(
+                        modifier = Modifier
+                            .weight(1f) // ⭐️ 최근 검색어를 제외한 "남은 공간"을 모두 차지
+                            .fillMaxWidth()
+                    )
+                } else {
+                    // (2) 최근 검색어도 없으면 EmptyState 보여주기
+                    EmptyState(modifier = Modifier.fillMaxSize())
+                }
             } else {
-                // (2) 최근 검색어도 없으면 EmptyState 보여주기
                 EmptyState(modifier = Modifier.fillMaxSize())
             }
         }
@@ -140,7 +161,7 @@ fun SearchScreen(modifier: Modifier = Modifier,
 fun EmptyState(modifier: Modifier = Modifier) {
     // Box: 내부 아이템들을 정렬하기 편함
     Box(
-        modifier = modifier.fillMaxSize(), // 부모(Column)가 준 공간을 꽉 채움
+        modifier = modifier, // 부모(Column)가 준 공간을 꽉 채움
         contentAlignment = Alignment.Center // 내용물을 정중앙에 배치
     ) {
         // Column: 아이콘과 텍스트를 세로로 나열
