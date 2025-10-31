@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.seminar_assignment_2025.ui.MovieDetailScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,13 +92,19 @@ fun NavGenerate() {
 
             // (4) '영화 상세' 화면 (새 경로)
             composable(
-                route = "movieDetail/{movieId}", // URL처럼 경로와 인자 정의
+                route = "movieDetail/{movieId}", // 경로와 인자 정의
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType })
             ) { backStackEntry ->
                 // (5) 전달받은 'movieId'를 꺼내서 상세 화면에 전달
                 val movieId = backStackEntry.arguments?.getInt("movieId")
                 if (movieId != null) {
-                    // TODO: MovieDetailScreen(movieId = movieId)
+                    MovieDetailScreen(
+                        movieId = movieId,
+                        // 1. "뒤로 가기" 버튼이 눌리면 이 함수를 실행하라고 전달
+                        onBackClick = {
+                            navController.popBackStack()
+                        }
+                    )
                 } else {
                     // (오류 처리)
                     Text("영화를 찾을 수 없습니다.")

@@ -1980,6 +1980,7 @@ private val movieList = Json.decodeFromString<List<Movie>>(movieRawData)
 
 interface MovieRepository {
     fun searchByTitle(query: String): List<Movie>
+    fun getMovieById(id: Int): Movie?
 }
 
 class MovieRepositoryImpl : MovieRepository {
@@ -1996,4 +1997,10 @@ class MovieRepositoryImpl : MovieRepository {
             movie.title.contains(query, ignoreCase = true)
         }
     }
+
+    override fun getMovieById(id: Int): Movie? {
+        // (미리 파싱해 둔) movieList에서 ID가 같은 영화를 찾습니다.
+        return movieList.find { it.id == id }
+    }
+
 }
