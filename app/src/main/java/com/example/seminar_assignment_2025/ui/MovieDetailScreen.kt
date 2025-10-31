@@ -1,19 +1,25 @@
 package com.example.seminar_assignment_2025.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,11 +36,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.seminar_assignment_2025.data.Movie
 import com.example.seminar_assignment_2025.data.genreMap
 
@@ -52,31 +63,34 @@ fun MovieDetailScreen(
     }
 
     Scaffold(
-        // 3. 투명한 TopAppBar (뒤로 가기 버튼용)
         topBar = {
-            TopAppBar(
-                title = { },
+            CenterAlignedTopAppBar(
+                title = { Text(
+                    text = movie?.title ?: "",
+                    maxLines = 1, // (제목이 길어도 한 줄로)
+                    fontSize = 16.sp
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) { // (전달받은 onBackClick 함수 연결)
-                        Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
+                        Icon(Icons.Default.ArrowBack, "Back")
                     }
                 },
-                // (배경을 투명하게, 아이콘을 흰색으로)
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    navigationIconContentColor = Color.White
+                    containerColor = Color.White,
+                    navigationIconContentColor = Color.Black
                 )
             )
         }
     ) { innerPadding ->
 
-        // 4. 영화 정보가 로드되기 전 (null)이면 로딩 스피너 표시
+        // (null)이면 로딩 스피너 표시
         if (movie == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         }
-        // 5. 영화 정보가 로드되면, 스크롤 가능한 Column 표시
+        // 영화 정보가 로드되면, 스크롤 가능한 Column 표시
         else {
             val loadedMovie = movie!!
             Column(
@@ -111,8 +125,82 @@ fun MovieDetailScreen(
 
 @Composable
 private fun MovieHeader(movie: Movie) {
-    // TODO
+    val backdropUrl = "https://image.tmdb.org/t/p/original${movie.backdrop_path ?: ""}"
+    val posterUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
+    val rating = String.format("%.1f", movie.vote_average)
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp) // (Figma 참고 임의 높이)
+    ) {
+        // 1. Backdrop (배경 이미지)
+        AsyncImage(
+            model = backdropUrl,
+            contentDescription = "Backdrop",
+            contentScale = ContentScale.Crop, // (꽉 채우고 자르기)
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // 2. 검은색 그라데이션 (Figma 참고)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+                        startY = 400f // (상단은 투명, 하단은 어둡게)
+                    )
+                )
+        )
+
+        // 3. 포스터 + 텍스트 (하단 정렬)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .align(Alignment.BottomStart), // (Box의 하단에 배치)
+            verticalAlignment = Alignment.Bottom // (Row 내부 아이템들도 하단 정렬)
+        ) {
+            AsyncImage(
+                model = posterUrl,
+                contentDescription = movie.title,
+                modifier = Modifier
+                    .width(100.dp)
+                    .aspectRatio(2 / 3f)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(movie.title, style = MaterialTheme.typography.headlineSmall, color = Color.White, fontWeight = FontWeight.Bold)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically // 별과 텍스트 중앙 정렬
+                ) {
+                    RatingStars(
+                        rating = movie.vote_average.toFloat(), // 평점 전달
+                        maxStars = 5 // 총 별 개수
+                    )
+                    Spacer(modifier = Modifier.width(4.dp)) // 별과 숫자 사이 간격
+                    Text(
+                        text = rating, // 숫자 평점
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
 }
+
+@Composable
+fun RatingStars(
+    rating: Float,
+    maxStars: Int = 5,
+    starColor: Color = Color(0xFFFFA000) // Figma 주황색 별
+) {
+
+}
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -123,7 +211,7 @@ private fun GenreChips(genreIds: List<Int>) {
     ) {
         val genreNames = genreIds.mapNotNull { genreMap[it] }
         genreNames.forEach { genreName ->
-            SuggestionChip( // (간단한 Chip)
+            SuggestionChip(
                 onClick = { /* (클릭 X) */ },
                 label = { Text(genreName) }
             )
