@@ -12,15 +12,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarHalf
@@ -43,8 +40,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -166,6 +165,7 @@ private fun MovieHeader(movie: Movie,
         modifier = modifier
             .fillMaxWidth()
             .height(headerHeight)
+            .graphicsLayer { clip = false }
     ) {
         // 1. Backdrop (배경 이미지)
         AsyncImage(
@@ -178,13 +178,9 @@ private fun MovieHeader(movie: Movie,
         // 2. 검은색 그라데이션 (Figma 참고)
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .height(backdropHeight)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
-                        startY = 400f // (상단은 투명, 하단은 어둡게)
-                    )
-                )
+                .background(Color.Black.copy(alpha = 0.4f))  // ★ 40% 검정
         )
 
         // 3. 텍스트 (하단 정렬)
@@ -242,6 +238,12 @@ private fun MovieHeader(movie: Movie,
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 16.dp)
+                .shadow(
+                    elevation = 12.dp,                 // ★ 그림자 세기
+                    clip = false,
+                    ambientColor = Color.Black.copy(alpha = 0.35f), // 옵션
+                    spotColor   = Color.Black.copy(alpha = 0.45f)   // 옵션
+                )
                 .width(164.dp)
                 .aspectRatio(2 / 3f)
                 .zIndex(2f)
