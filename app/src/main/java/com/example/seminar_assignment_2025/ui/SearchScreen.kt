@@ -100,8 +100,8 @@ fun SearchScreen(modifier: Modifier = Modifier,
                 SearchResultList(
                     movies = searchResults,
                     onMovieClick = { movie ->
-                        // (스펙: Jetpack Navigation으로 상세보기 이동)
-                        // TODO: onMovieClick(movie.id)
+                        // 영화 상세보기 이동
+                        onMovieClick(movie.id)
                     }
                 )
             }

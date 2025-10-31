@@ -43,7 +43,7 @@ enum class NavItem(val route: String, val label: String, val icon: ImageVector) 
 }
 @Composable
 fun NavGenerate() {
-
+    // jetpack 구현
     val navController: NavHostController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -74,8 +74,6 @@ fun NavGenerate() {
             startDestination = NavItem.Home.route, // 시작 탭
             modifier = Modifier.padding(innerPadding)
         ) {
-            // --- 지도에 '경로' 등록 ---
-
             // (1) 5개의 기본 탭 화면
             composable(NavItem.Home.route) { HomeScreen() }
             composable(NavItem.Search.route) {
