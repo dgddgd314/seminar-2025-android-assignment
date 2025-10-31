@@ -106,7 +106,8 @@ fun MovieDetailScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding) // (Scaffold가 알려준 패딩 적용)
+                    .padding(innerPadding)
+                    .graphicsLayer { clip = false }
             ) {
                 Column(modifier = Modifier
                     .fillMaxSize()
@@ -157,24 +158,27 @@ private fun MovieHeader(movie: Movie,
     val posterUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}"
     val rating = String.format("%.1f", movie.vote_average)
 
+    val backdropHeight = 300.dp        // 화면에 보이는 배경 높이
+    val overhang = 20.dp               // 포스터가 내려오는 높이
+    val headerHeight = backdropHeight + overhang
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp) // (Figma 참고 임의 높이)
-            .graphicsLayer(clip = false)
+            .height(headerHeight)
     ) {
         // 1. Backdrop (배경 이미지)
         AsyncImage(
             model = backdropUrl,
             contentDescription = "Backdrop",
-            contentScale = ContentScale.Crop, // (꽉 채우고 자르기)
-            modifier = Modifier.fillMaxSize()
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.height(backdropHeight)
         )
 
         // 2. 검은색 그라데이션 (Figma 참고)
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .height(backdropHeight)
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
@@ -183,7 +187,7 @@ private fun MovieHeader(movie: Movie,
                 )
         )
 
-        // 3. 포스터 + 텍스트 (하단 정렬)
+        // 3. 텍스트 (하단 정렬)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -191,16 +195,13 @@ private fun MovieHeader(movie: Movie,
                 .padding(start = 16.dp, end = 16.dp), // 하단 패딩 추가
             verticalAlignment = Alignment.Bottom
         ) {
-            // 포스터
-            AsyncImage(
-                model = posterUrl,
-                contentDescription = movie.title,
+            // 포스터 공간 확보
+            Spacer(
                 modifier = Modifier
-                    .width(164.dp)
+                    .width(164.dp) // 포스터 자리를 시각적으로 차지시키기 위한 더미
                     .aspectRatio(2 / 3f)
-                    .clip(MaterialTheme.shapes.medium)
-                    .offset(y = 70.dp)
             )
+
             Spacer(modifier = Modifier.width(20.dp))
             Column (
                 modifier = Modifier.align(Alignment.Bottom) // Column 내부 아이템들을 하단 정렬
@@ -231,9 +232,20 @@ private fun MovieHeader(movie: Movie,
                         maxStars = 5 // 총 별 개수
                     )
                 }
-                Spacer(modifier = Modifier.height(36.dp))
+                Spacer(modifier = Modifier.height(overhang + 36.dp))
             }
         }
+
+        AsyncImage(
+            model = posterUrl,
+            contentDescription = movie.title,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 16.dp)
+                .width(164.dp)
+                .aspectRatio(2 / 3f)
+                .zIndex(2f)
+        )
     }
 }
 
