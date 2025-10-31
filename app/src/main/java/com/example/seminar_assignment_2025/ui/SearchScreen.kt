@@ -37,7 +37,8 @@ import androidx.compose.ui.text.input.ImeAction
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier,
-                 viewModel: SearchViewModel = viewModel()) {
+                 viewModel: SearchViewModel = viewModel(),
+                 onMovieClick: (Int) -> Unit) {
 
     // 상태 구독
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -100,7 +101,7 @@ fun SearchScreen(modifier: Modifier = Modifier,
                     movies = searchResults,
                     onMovieClick = { movie ->
                         // (스펙: Jetpack Navigation으로 상세보기 이동)
-                        // TODO: navController.navigate("movieDetail/${movie.id}")
+                        // TODO: onMovieClick(movie.id)
                     }
                 )
             }
