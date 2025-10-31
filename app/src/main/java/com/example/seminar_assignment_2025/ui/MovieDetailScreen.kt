@@ -1,8 +1,10 @@
 package com.example.seminar_assignment_2025.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.seminar_assignment_2025.data.Movie
+import com.example.seminar_assignment_2025.data.genreMap
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -113,5 +117,16 @@ private fun MovieHeader(movie: Movie) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenreChips(genreIds: List<Int>) {
-    // TODO
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val genreNames = genreIds.mapNotNull { genreMap[it] }
+        genreNames.forEach { genreName ->
+            SuggestionChip( // (간단한 Chip)
+                onClick = { /* (클릭 X) */ },
+                label = { Text(genreName) }
+            )
+        }
+    }
 }
