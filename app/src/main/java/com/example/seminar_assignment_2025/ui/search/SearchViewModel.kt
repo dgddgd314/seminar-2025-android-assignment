@@ -8,6 +8,7 @@ import com.example.seminar_assignment_2025.data.Movie
 import com.example.seminar_assignment_2025.data.MovieRepository
 import com.example.seminar_assignment_2025.data.MovieRepositoryImpl
 import com.example.seminar_assignment_2025.data.SearchHistoryRepository
+import com.example.seminar_assignment_2025.network.NetworkModule
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -49,19 +50,20 @@ class SearchViewModel(
             _searchResults.value = movieRepository.searchByTitle(query)
         }
     }
-
-    fun getGenreName(id: Int): String {
-        return movieRepository.getGenreName(id)
-    }
 }
 
 class SearchViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
+
+            // ⭐️ NetworkModule에서 apiService를 가져옵니다.
+            val apiService = NetworkModule.apiService
+
             @Suppress("UNCHECKED_CAST")
             return SearchViewModel(
                 searchHistoryRepository = SearchHistoryRepository(application),
-                movieRepository = MovieRepositoryImpl()
+                // ⭐️ apiService를 MovieRepositoryImpl 생성자에 전달합니다.
+                movieRepository = MovieRepositoryImpl(apiService)
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

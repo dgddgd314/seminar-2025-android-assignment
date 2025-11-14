@@ -118,8 +118,8 @@ fun MovieDetailScreen(movie: Movie, navController: NavController, viewModel: Sea
             item {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        movie.genreIds.forEach { genreId ->
-                            Chip(label = viewModel.getGenreName(genreId))
+                        movie.genres.forEach { genreName ->
+                            Chip(label = genreName)
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))

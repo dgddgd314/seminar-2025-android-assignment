@@ -228,7 +228,7 @@ fun MovieItem(movie: Movie, viewModel: SearchViewModel, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(movie.releaseDate.substring(0, 4), color = Color.Gray)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(movie.genreIds.joinToString { viewModel.getGenreName(it) }, color = Color.Gray)
+                Text(movie.genres.joinToString(), color = Color.Gray)
 
                 Spacer(Modifier.weight(1f))
 
