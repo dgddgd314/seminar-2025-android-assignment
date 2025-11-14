@@ -28,6 +28,8 @@ class MovieRepositoryImpl(
         // 4. API 서비스를 호출해 응답을 받습니다.
         val response = apiService.searchMovie(query)
 
+        fetchGenresIfNeeded()
+
         // 5. Dto 리스트를 Movie 모델 리스트로 변환 (기존 로직과 동일)
         return response.results.map { dto ->
             Movie(
@@ -51,4 +53,27 @@ class MovieRepositoryImpl(
         fetchGenresIfNeeded() // 맵이 비어있으면 채워넣습니다.
         return genreMap[id] ?: "" // 맵에서 장르 이름을 찾습니다.
     }
+
+    override suspend fun getMovieDetail(id: Int): MovieDetail {
+        // 1. ApiService에서 새 함수를 호출해 DTO를 받습니다.
+        val dto = apiService.getMovieDetail(id)
+
+        // 2. MovieDetailDto를 UI용 MovieDetail 모델로 변환합니다.
+        return MovieDetail(
+            id = dto.id,
+            title = dto.title,
+            releaseDate = dto.releaseDate,
+            voteAverage = dto.voteAverage,
+            posterPath = dto.posterPath ?: "",
+            backdropPath = dto.backdropPath ?: "",
+            overview = dto.overview ?: "",
+
+            // ⭐️ 상세 DTO는 GenreDto 리스트를 주므로, .name만 뽑아서 String 리스트로 만듭니다.
+            genres = dto.genres.map { it.name },
+
+            runtime = dto.runtime ?: 0,
+            tagline = dto.tagline ?: ""
+        )
+    }
+
 }

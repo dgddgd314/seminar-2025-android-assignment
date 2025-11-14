@@ -92,9 +92,7 @@ fun SearchScreen(
             }
         } else {
             SearchResultList(movies = searchResults, viewModel = viewModel) { movie ->
-                val movieJson = Json.encodeToString(movie)
-                val encodedMovieJson = URLEncoder.encode(movieJson, "UTF-8")
-                navController.navigate("movieDetail/$encodedMovieJson")
+                navController.navigate("movieDetail/${movie.id}")
             }
         }
     }

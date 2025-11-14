@@ -2,7 +2,9 @@ package com.example.seminar_assignment_2025.network
 
 import MovieSearchResponse
 import com.example.seminar_assignment_2025.data.GenreListDto
+import com.example.seminar_assignment_2025.data.MovieDetailDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TmdbApiService {
@@ -17,4 +19,10 @@ interface TmdbApiService {
     // 'genre/movie/list' 엔드포인트에 GET 요청
     @GET("genre/movie/list")
     suspend fun getGenres(): GenreListDto
+
+    @GET("movie/{movie_id}") // ⭐️ {movie_id}는 Path 변수
+    suspend fun getMovieDetail(
+        @Path("movie_id") movieId: Int // ⭐️ 이 ID가 URL의 {movie_id}로 들어감
+    ): MovieDetailDto // ⭐️ 우리가 방금 만든 MovieDetailDto를 반환
+
 }

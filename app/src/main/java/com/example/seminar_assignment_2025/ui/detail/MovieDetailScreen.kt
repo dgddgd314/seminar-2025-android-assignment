@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,107 +30,178 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.seminar_assignment_2025.data.Movie
-import com.example.seminar_assignment_2025.ui.search.SearchViewModel
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MovieDetailScreen(movie: Movie, navController: NavController, viewModel: SearchViewModel) {
+fun MovieDetailScreen(navController: NavController) {
+    // ⭐️ 팩토리를 사용해 ViewModel을 생성합니다.
+    val owner = LocalSavedStateRegistryOwner.current
+    val viewModel: MovieDetailViewModel = viewModel(
+        factory = MovieDetailViewModelFactory(owner)
+    )
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(movie.title, fontSize = 16.sp) },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.size(width = 22.dp, height = 25.dp)
-                    ) {
-                        Icon(Icons.Default.ArrowBack, "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Black,
-                    navigationIconContentColor = Color.Black
-                ),
-                modifier = Modifier.height(35.dp)
-            )
-        }
-    ) { innerPadding ->
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
-            item {
-                Box(modifier = Modifier.height(301.dp)) {
-                    AsyncImage(
-                        model = "https://image.tmdb.org/t/p/original${movie.backdropPath}",
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.4f))
-                    )
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Card(
-                            modifier = Modifier.size(164.dp, 246.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-                        ) {
-                            AsyncImage(
-                                model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
-                                contentDescription = movie.title,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
+    // 1. ViewModel의 StateFlow를 관찰합니다.
+    val movieDetail by viewModel.movieDetail.collectAsState()
+
+    // 2. movieDetail이 null이면 (로딩 중) 로딩 스피너 표시
+    if (movieDetail == null) {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar( // ⭐️ 뒤로가기 버튼이 있는 TopAppBar
+                    title = { Text("") },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, "Back")
                         }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column {
-                            Text(
-                                text = movie.title,
-                                color = Color.White,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            StarRating(rating = movie.voteAverage)
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.White,
+                        navigationIconContentColor = Color.Black
+                    )
+                )
+            }
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator() // ⭐️ 로딩 스피너
+            }
+        }
+    } else {
+        // 3. 데이터가 도착하면 (null이 아니면) UI를 그립니다.
+        val movie = movieDetail!! // non-null로 사용
+
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(movie.title, fontSize = 16.sp) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { navController.popBackStack() },
+                            modifier = Modifier.size(width = 22.dp, height = 25.dp)
+                        ) {
+                            Icon(Icons.Default.ArrowBack, "Back")
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.White,
+                        titleContentColor = Color.Black,
+                        navigationIconContentColor = Color.Black
+                    ),
+                    modifier = Modifier.height(35.dp)
+                )
+            }
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                item {
+                    Box(modifier = Modifier.height(301.dp)) {
+                        AsyncImage(
+                            model = "https://image.tmdb.org/t/p/original${movie.backdropPath}",
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.4f))
+                        )
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Card(
+                                modifier = Modifier.size(164.dp, 246.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                            ) {
+                                AsyncImage(
+                                    model = "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                    contentDescription = movie.title,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column {
+                                Text(
+                                    text = movie.title,
+                                    color = Color.White,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                StarRating(rating = movie.voteAverage)
+                            }
                         }
                     }
                 }
-            }
 
-            item {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        movie.genres.forEach { genreName ->
-                            Chip(label = genreName)
+                item {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            movie.genres.forEach { genreName ->
+                                Chip(label = genreName)
+                            }
                         }
+
+                        // ⭐️ 상세 정보에만 있는 "Tagline" 추가
+                        if (movie.tagline.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text("Tagline", style = MaterialTheme.typography.titleLarge, fontSize = 16.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                "\"${movie.tagline}\"",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 12.sp,
+                                fontStyle = FontStyle.Italic
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text("Summary", style = MaterialTheme.typography.titleLarge, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(movie.overview, style = MaterialTheme.typography.bodyLarge, fontSize = 12.sp)
+
+                        // ⭐️ 상세 정보에만 있는 "Runtime" 추가
+                        if (movie.runtime > 0) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text("Runtime", style = MaterialTheme.typography.titleLarge, fontSize = 14.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("${movie.runtime} minutes", style = MaterialTheme.typography.bodyLarge, fontSize = 12.sp)
+                        }
+
+                        // ⭐️ "Popularity"는 MovieDetail 모델에 없으므로 제거
+                        /*
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text("Popularity", style = MaterialTheme.typography.titleLarge, fontSize = 14.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(movie.popularity.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = 12.sp)
+                        */
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text("Summary", style = MaterialTheme.typography.titleLarge, fontSize = 16.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(movie.overview, style = MaterialTheme.typography.bodyLarge, fontSize = 12.sp)
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text("Popularity", style = MaterialTheme.typography.titleLarge, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(movie.popularity.toString(), style = MaterialTheme.typography.bodyLarge, fontSize = 12.sp)
                 }
             }
         }

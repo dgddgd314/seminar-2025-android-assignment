@@ -52,16 +52,15 @@ class MainActivity : AppCompatActivity() {
                     composable(NavItem.Game.route) { GameScreen() }
                     composable(NavItem.Profile.route) { ProfileScreen(Modifier.padding(innerPadding)) }
                     composable(
-                        route = "movieDetail/{movieJson}",
-                        arguments = listOf(navArgument("movieJson") { type = NavType.StringType })
-                    ) { backStackEntry ->
-                        val movieJson = backStackEntry.arguments?.getString("movieJson")?.let {
-                            URLDecoder.decode(it, "UTF-8")
-                        }
-                        if (movieJson != null) {
-                            val movie = Json.decodeFromString<Movie>(movieJson)
-                            MovieDetailScreen(movie = movie, navController = navController, viewModel = searchViewModel)
-                        }
+                        route = "movieDetail/{movieId}",
+
+                        // 2. "movieId"는 Int 타입이라고 Navigation에게 알려줍니다.
+                        arguments = listOf(navArgument("movieId") { type = NavType.IntType })
+                    ) {
+                        // 3. MovieDetailScreen을 호출합니다. (이제 movie 객체를 넘길 필요 X)
+                        //    MovieDetailScreen이 내부에서 MovieDetailViewModelFactory를 통해
+                        //    ViewModel을 생성하고, 그 ViewModel이 "movieId"를 알아서 꺼내 씁니다.
+                        MovieDetailScreen(navController = navController)
                     }
                 }
             }
