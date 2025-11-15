@@ -12,5 +12,5 @@ data class Movie(
     val genres: List<String>,
     val backdropPath: String,
     val overview: String,
-    val popularity: Double
+    val popularity: Double,
 )

@@ -16,6 +16,8 @@ data class MovieDetailDto(
     // ⭐️ 중요: 상세 API는 ID가 아닌, 장르 객체 목록(List<GenreDto>)을 줍니다.
     val genres: List<GenreDto>,
 
-    val runtime: Int?, // ⭐️ (예) 148 (분)
-    val tagline: String? // ⭐️ (예) "Your mind is the scene of the crime."
+    val runtime: Int?,
+    val tagline: String?,
+
+    @SerialName("adult") val adult: Boolean = false
 )

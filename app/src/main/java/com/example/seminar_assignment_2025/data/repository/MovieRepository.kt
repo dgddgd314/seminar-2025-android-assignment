@@ -21,5 +21,6 @@ data class MovieDetail(
     val overview: String,
     val genres: List<String>, // ⭐️ DTO와 달리 장르 '이름' 리스트
     val runtime: Int,
-    val tagline: String
+    val tagline: String,
+    val adult: Boolean
 )

@@ -2,6 +2,7 @@ package com.example.seminar_assignment_2025.ui.detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -155,6 +156,46 @@ fun MovieDetailScreen(navController: NavController) {
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 StarRating(rating = movie.voteAverage)
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp) // 항목 간 간격
+                                ) {
+                                    // (1) 상영 시간 (ex: 1h 40m)
+                                    if (movie.runtime > 0) {
+                                        Text(
+                                            text = formatRuntime(movie.runtime), // ⬅️ 헬퍼 함수 사용
+                                            color = Color.White.copy(alpha = 0.8f), // 살짝 투명한 흰색
+                                            fontSize = 12.sp
+                                        )
+                                    }
+
+                                    // (2) 개봉 연도 (ex: 2003)
+                                    // (StringIndexOutOfBoundsException 방지)
+                                    if (movie.releaseDate.length >= 4) {
+                                        Text(
+                                            text = movie.releaseDate.take(4), // ⬅️ 연도만 (안전하게)
+                                            color = Color.White.copy(alpha = 0.8f),
+                                            fontSize = 12.sp
+                                        )
+                                    }
+
+                                    // (3) 청소년 불가 (R18+)
+                                    if (movie.adult) {
+                                        // 빨간색 R18+ 칩 (Surface/Card 대신 간단히 구현)
+                                        Text(
+                                            text = "R18+",
+                                            color = Color.Red,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier
+                                                .border(BorderStroke(1.dp, Color.Red), RoundedCornerShape(4.dp))
+                                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -252,4 +293,10 @@ fun StarRating(rating: Double) {
             }
         }
     }
+}
+
+private fun formatRuntime(minutes: Int): String {
+    val hours = minutes / 60
+    val mins = minutes % 60
+    return "${hours}h ${mins}m"
 }

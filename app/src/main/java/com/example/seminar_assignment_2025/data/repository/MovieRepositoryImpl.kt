@@ -73,7 +73,8 @@ class MovieRepositoryImpl(
             genres = dto.genres.map { it.name },
 
             runtime = dto.runtime ?: 0,
-            tagline = dto.tagline ?: ""
+            tagline = dto.tagline ?: "",
+            adult = dto.adult ?: false
         )
     }
 
