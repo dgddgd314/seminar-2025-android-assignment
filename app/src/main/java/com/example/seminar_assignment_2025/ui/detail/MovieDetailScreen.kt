@@ -2,6 +2,7 @@ package com.example.seminar_assignment_2025.ui.detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -160,7 +162,12 @@ fun MovieDetailScreen(navController: NavController) {
 
                 item {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        val horizontalScrollState = rememberScrollState()
+
+                        Row(
+                            modifier = Modifier.horizontalScroll(horizontalScrollState),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             movie.genres.forEach { genreName ->
                                 Chip(label = genreName)
                             }
