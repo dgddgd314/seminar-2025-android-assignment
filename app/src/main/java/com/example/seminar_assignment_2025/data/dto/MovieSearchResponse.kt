@@ -1,6 +1,5 @@
 package com.example.seminar_assignment_2025.data.dto
 
-import com.example.seminar_assignment_2025.data.MovieDto
 import kotlinx.serialization.Serializable
 
 @Serializable

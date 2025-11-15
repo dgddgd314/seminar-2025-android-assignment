@@ -1,7 +1,7 @@
 package com.example.seminar_assignment_2025.di
 
-import com.example.seminar_assignment_2025.data.MovieRepository
-import com.example.seminar_assignment_2025.data.MovieRepositoryImpl
+import com.example.seminar_assignment_2025.data.repository.MovieRepository
+import com.example.seminar_assignment_2025.data.repository.MovieRepositoryImpl
 import com.example.seminar_assignment_2025.network.TmdbApiService
 import dagger.Module
 import dagger.Provides
@@ -9,7 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import android.content.Context
-import com.example.seminar_assignment_2025.data.SearchHistoryRepository
+import com.example.seminar_assignment_2025.data.repository.SearchHistoryRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module

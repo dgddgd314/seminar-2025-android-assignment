@@ -1,5 +1,6 @@
-package com.example.seminar_assignment_2025.data
+package com.example.seminar_assignment_2025.data.repository
 
+import com.example.seminar_assignment_2025.data.Movie
 import com.example.seminar_assignment_2025.network.TmdbApiService
 
 // 1. 생성자에서 TmdbApiService를 주입받습니다.

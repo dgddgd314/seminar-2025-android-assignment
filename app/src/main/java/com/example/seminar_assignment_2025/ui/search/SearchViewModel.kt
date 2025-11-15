@@ -1,21 +1,17 @@
 package com.example.seminar_assignment_2025.ui.search
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.seminar_assignment_2025.data.Movie
-import com.example.seminar_assignment_2025.data.MovieRepository
-import com.example.seminar_assignment_2025.data.SearchHistoryRepository
+import com.example.seminar_assignment_2025.data.repository.MovieRepository
+import com.example.seminar_assignment_2025.data.repository.SearchHistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import android.content.Context
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel

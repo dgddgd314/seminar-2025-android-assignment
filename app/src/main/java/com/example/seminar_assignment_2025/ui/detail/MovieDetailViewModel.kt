@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.seminar_assignment_2025.data.MovieDetail
-import com.example.seminar_assignment_2025.data.MovieRepository
+import com.example.seminar_assignment_2025.data.repository.MovieDetail
+import com.example.seminar_assignment_2025.data.repository.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
