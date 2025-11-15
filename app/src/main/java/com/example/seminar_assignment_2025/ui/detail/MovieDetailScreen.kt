@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -49,11 +50,8 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailScreen(navController: NavController) {
-    // ⭐️ 팩토리를 사용해 ViewModel을 생성합니다.
-    val owner = LocalSavedStateRegistryOwner.current
-    val viewModel: MovieDetailViewModel = viewModel(
-        factory = MovieDetailViewModelFactory(owner)
-    )
+
+    val viewModel: MovieDetailViewModel = hiltViewModel()
 
     // 1. ViewModel의 StateFlow를 관찰합니다.
     val movieDetail by viewModel.movieDetail.collectAsState()

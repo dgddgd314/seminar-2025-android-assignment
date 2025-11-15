@@ -1,6 +1,6 @@
 package com.example.seminar_assignment_2025.network
 
-import MovieSearchResponse
+import com.example.seminar_assignment_2025.data.dto.MovieSearchResponse
 import com.example.seminar_assignment_2025.data.GenreListDto
 import com.example.seminar_assignment_2025.data.MovieDetailDto
 import retrofit2.http.GET

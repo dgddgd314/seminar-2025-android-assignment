@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -58,9 +59,7 @@ import kotlin.math.roundToInt
 fun SearchScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: SearchViewModel = viewModel(
-        factory = SearchViewModelFactory(LocalContext.current.applicationContext as Application)
-    )
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
     val searchHistory by viewModel.searchHistory.collectAsState()
     var searchText by remember { mutableStateOf(TextFieldValue("")) }

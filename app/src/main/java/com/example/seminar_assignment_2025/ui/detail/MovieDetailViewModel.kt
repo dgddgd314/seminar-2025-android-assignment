@@ -12,9 +12,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel // ⬅️ import 추가
+import javax.inject.Inject // ⬅️ import 추가
 
 // Hilt 애노테이션이 없는, 순수한 ViewModel 클래스
-class MovieDetailViewModel(
+@HiltViewModel
+class MovieDetailViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
     savedStateHandle: SavedStateHandle // NavHost가 ID를 여기에 넣어줍니다.
 ) : ViewModel() {

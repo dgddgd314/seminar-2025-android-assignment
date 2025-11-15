@@ -1,4 +1,4 @@
-// MovieSearchResponse.kt (새 파일 또는 Dto 파일에 추가)
+package com.example.seminar_assignment_2025.data.dto
 
 import com.example.seminar_assignment_2025.data.MovieDto
 import kotlinx.serialization.Serializable

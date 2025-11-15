@@ -27,27 +27,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.seminar_assignment_2025.ui.GameScreen
-import com.example.seminar_assignment_2025.ui.search.SearchScreen
 import com.example.seminar_assignment_2025.ui.detail.MovieDetailScreen
-import com.example.seminar_assignment_2025.data.Movie
-import com.example.seminar_assignment_2025.ui.search.SearchViewModel
-import com.example.seminar_assignment_2025.ui.search.SearchViewModelFactory
+import com.example.seminar_assignment_2025.ui.search.SearchScreen
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(application))
+            // val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(application))
 
             Scaffold(
                 bottomBar = { BottomNavigationBar(navController) }
             ) { innerPadding ->
                 NavHost(navController, startDestination = NavItem.Home.route, Modifier.padding(innerPadding)) {
                     composable(NavItem.Home.route) { HomeScreen(Modifier.padding(innerPadding)) }
-                    composable(NavItem.Search.route) { SearchScreen(navController = navController, viewModel = searchViewModel) }
+                    composable (NavItem.Search.route) { SearchScreen(navController = navController) }
                     composable(NavItem.App.route) { AppScreen(Modifier.padding(innerPadding)) }
                     composable(NavItem.Game.route) { GameScreen() }
                     composable(NavItem.Profile.route) { ProfileScreen(Modifier.padding(innerPadding)) }
